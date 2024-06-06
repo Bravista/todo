@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,8 +14,18 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  TextEditingController controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   List<String> toDoListe = ["Einkaufen"];
+  void _toDoListe() {
+    if (_controller.text.isEmpty) {
+      return;
+    }
+    setState(() {
+      toDoListe.add(_controller.text);
+      _controller.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,13 +35,13 @@ class _MainAppState extends State<MainApp> {
               child: Column(
             children: [
               TextField(
-                controller: controller,
+                controller: _controller,
               ),
               FilledButton(
                 onPressed: () {
                   setState(() {
-                    toDoListe.add(controller.text);
-                    controller.clear();
+                    toDoListe.add(_controller.text);
+                    _controller.clear();
                   });
                 },
                 child: const Text("Hinzufügen"),
