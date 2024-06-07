@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MainApp());
@@ -13,13 +14,34 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   final TextEditingController _controller = TextEditingController();
   List<String> toDoListe = ["Einkaufen"];
-  void _addItem() {
-    if (_controller.text.isEmpty) {
-      return;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadItems();
+  }
+
+  Future<void> _loadItems() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      toDoListe = prefs.getStringList('items') ?? [];
+    });
+  }
+
+  Future<void> _addItem() async {
+    if (_controller.text.isEmpty) return;
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
       toDoListe.add(_controller.text);
+      prefs.setStringList('items', toDoListe);
       _controller.clear();
+    });
+  }
+
+  Future<void> _removeItem(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      toDoListe.removeAt(index);
+      prefs.setStringList('items', toDoListe);
     });
   }
 
