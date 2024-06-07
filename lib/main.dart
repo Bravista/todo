@@ -1,5 +1,3 @@
-// ignore_for_file: unused_element
-
 import 'package:flutter/material.dart';
 
 void main() {
@@ -8,7 +6,6 @@ void main() {
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
-
   @override
   State<MainApp> createState() => _MainAppState();
 }
@@ -16,7 +13,7 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   final TextEditingController _controller = TextEditingController();
   List<String> toDoListe = ["Einkaufen"];
-  void _toDoListe() {
+  void _addItem() {
     if (_controller.text.isEmpty) {
       return;
     }
@@ -29,22 +26,37 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: Center(
-              child: Column(
+        home: Scaffold(
+      appBar: AppBar(
+        title: const Text("To do Liste"),
+      ),
+      body: Form(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
             children: [
-              TextField(
-                controller: _controller,
+              const SizedBox(
+                height: 100,
               ),
-              FilledButton(
-                onPressed: () {
-                  setState(() {
-                    toDoListe.add(_controller.text);
-                    _controller.clear();
-                  });
-                },
-                child: const Text("Hinzufügen"),
+              TextFormField(
+                controller: _controller,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: validateText,
+                decoration: const InputDecoration(
+                  labelText: 'Gib einen Text ein',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(
+                height: 33,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black87,
+                  backgroundColor: Colors.grey.shade400,
+                ),
+                onPressed: _addItem,
+                child: const Text('Hinzufügen'),
               ),
               Expanded(
                 child: ListView.builder(
@@ -64,9 +76,16 @@ class _MainAppState extends State<MainApp> {
                     }),
               )
             ],
-          )),
+          ),
         ),
       ),
-    );
+    ));
   }
+}
+
+String? validateText(String? input) {
+  if (input == null || input.isEmpty) {
+    return 'Bitte Text eingeben';
+  }
+  return null;
 }
